@@ -37,7 +37,7 @@ class Blockchain {
     return new Block(0, '1514261848602', { amount: 1 }, '0');
   }
 
-  getLatestBlock () {
+  getLatestBlock() {
     return this.chain[this.chain.length - 1];
   }
 
@@ -46,6 +46,27 @@ class Blockchain {
     newBlock.hash = newBlock.calculateHash();
     this.chain.push(newBlock);
   }
+
+  // Verify
+  isChainValid() {
+    for (let i = 1; i < this.chain.length; i++) {
+      const currentBlock = this.chain[i];
+      const previousBlock = this.chain[i - 1];
+
+      // re-calculate
+      if (currentBlock.hash !== currentBlock.calculateHash()) {
+        return false;
+      }
+      // test hash
+      if (currentBlock.previousHash !== previousBlock.hash) {
+        return false;
+      }
+
+      return true;
+    }  
+
+  }
+
 }
 
 
@@ -55,5 +76,14 @@ let fujiwaraCoin = new Blockchain();
 fujiwaraCoin.addBlock(new Block(1, '1514261991325', { amount: 2 }));
 fujiwaraCoin.addBlock(new Block(2, Date.now(), { amount: 10 }));
 
-console.log(JSON.Stringify(fujiwaraCoin, null, 4));
+
+console.log('Is blockchain valid? ' + fujiwaraCoin.isChainValid());
+
+fujiwaraCoin.chain[1].data = { amount: 1000 };
+
+console.log('Is blockchain valid? ' + fujiwaraCoin.isChainValid());
+
+
+
+// console.log(JSON.Stringify(fujiwaraCoin, null, 4));
 
